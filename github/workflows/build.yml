@@ -1,4 +1,4 @@
-name: Build JumpReset Mod
+name: Build Mod
 
 on: [push, workflow_dispatch]
 
@@ -7,16 +7,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 8
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: 8
           distribution: temurin
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Generate gradlew
+        run: |
+          gradle wrapper --gradle-version 4.9
 
       - name: Setup Forge workspace
         run: ./gradlew setupDecompWorkspace
@@ -24,8 +25,8 @@ jobs:
       - name: Build mod
         run: ./gradlew build
 
-      - name: Upload mod JAR
-        uses: actions/update-release@v1
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
         with:
-          file: build/libs/JumpResetMod-1.2.jar
-        if: github.ref == 'refs/heads/main'
+          name: JumpResetMod1.2
+          path: build/libs/*.jar
